@@ -1,6 +1,6 @@
 # Person Re-Identification
 
-A deep learning pipeline for recognizing the same person across different camera angles, lighting conditions, and poses — built with PyTorch.
+A deep learning pipeline for recognizing the same person across different camera angles, lighting conditions, and poses, built with PyTorch.
 
 ---
 
