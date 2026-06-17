@@ -7,16 +7,14 @@ import random
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# ── Dataset ───────────────────────────────────────────────────────────────────
+#Dataset
 
 class SyntheticReIDDataset(Dataset):
     def __init__(self, num_identities=40, images_per_id=6):
         self.data = []
         for pid in range(num_identities):
-            # Simulate each person as a cluster in feature space
             center = torch.randn(3, 64, 32)
             for _ in range(images_per_id):
-                # Add small noise to simulate lighting/pose variation
                 img = center + 0.1 * torch.randn(3, 64, 32)
                 self.data.append((img, pid))
 
@@ -48,13 +46,13 @@ class TripletDataset(Dataset):
         return anchor_img, self.data[pos_idx][0], self.data[neg_idx][0]
 
 
-# ── Model ─────────────────────────────────────────────────────────────────────
+#Model 
 
 class ReIDModel(nn.Module):
     def __init__(self, embedding_dim=64):
         super().__init__()
 
-        # Lightweight CNN backbone (mimics ResNet-50 concept without the size)
+
         self.backbone = nn.Sequential(
             nn.Conv2d(3, 32, 3, padding=1), nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d(2),
             nn.Conv2d(32, 64, 3, padding=1), nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d(2),
@@ -62,7 +60,7 @@ class ReIDModel(nn.Module):
             nn.AdaptiveAvgPool2d((4, 2))
         )
 
-        # Channel attention
+        #Channel attention
         self.attention = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(),
@@ -87,7 +85,7 @@ class ReIDModel(nn.Module):
         return nn.functional.normalize(self.embedder(features), p=2, dim=1)
 
 
-# ── Triplet Loss ──────────────────────────────────────────────────────────────
+#Triplet Loss 
 
 class TripletLoss(nn.Module):
     def __init__(self, margin=0.3):
@@ -100,7 +98,7 @@ class TripletLoss(nn.Module):
         return torch.clamp(pos_dist - neg_dist + self.margin, min=0).mean()
 
 
-# ── Training ──────────────────────────────────────────────────────────────────
+#Training 
 
 def train(model, loader, optimizer, criterion, device, epochs=8):
     model.train()
@@ -116,7 +114,7 @@ def train(model, loader, optimizer, criterion, device, epochs=8):
         print(f"  Epoch {epoch+1}/{epochs}  |  Loss: {total_loss/len(loader):.4f}")
 
 
-# ── Evaluation ────────────────────────────────────────────────────────────────
+#Evaluation 
 
 def get_embeddings(model, dataset, device):
     model.eval()
@@ -136,8 +134,7 @@ def rank1_accuracy(embeddings, labels):
     return correct / len(labels)
 
 
-# ── 3 Example Queries ─────────────────────────────────────────────────────────
-
+#Examples 
 def show_examples(embeddings, labels, n=3):
     sim = cosine_similarity(embeddings)
     np.fill_diagonal(sim, -1)
@@ -165,7 +162,7 @@ def show_examples(embeddings, labels, n=3):
         print()
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+#Main
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {device}\n")
