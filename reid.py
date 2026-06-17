@@ -8,7 +8,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 #Dataset
-
 class SyntheticReIDDataset(Dataset):
     def __init__(self, num_identities=40, images_per_id=6):
         self.data = []
@@ -47,7 +46,6 @@ class TripletDataset(Dataset):
 
 
 #Model 
-
 class ReIDModel(nn.Module):
     def __init__(self, embedding_dim=64):
         super().__init__()
@@ -86,7 +84,6 @@ class ReIDModel(nn.Module):
 
 
 #Triplet Loss 
-
 class TripletLoss(nn.Module):
     def __init__(self, margin=0.3):
         super().__init__()
@@ -99,7 +96,6 @@ class TripletLoss(nn.Module):
 
 
 #Training 
-
 def train(model, loader, optimizer, criterion, device, epochs=8):
     model.train()
     for epoch in range(epochs):
@@ -115,7 +111,6 @@ def train(model, loader, optimizer, criterion, device, epochs=8):
 
 
 #Evaluation 
-
 def get_embeddings(model, dataset, device):
     model.eval()
     embeddings, labels = [], []
@@ -163,7 +158,6 @@ def show_examples(embeddings, labels, n=3):
 
 
 #Main
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {device}\n")
 
